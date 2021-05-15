@@ -52,7 +52,7 @@ main(int argc, char *argv[])
 		return 1;
 	}
 
-	unsigned char *key = (unsigned char *) SHA512Data(password, strlen(password), NULL);
+	unsigned char *key = (unsigned char *) SHA256Data(password, strlen(password), NULL);
 	unsigned char *iv = (unsigned char *) SHA1Data(password, strlen(password), NULL);
 
 	unsigned char *ciphertext = malloc(2 * length);
@@ -79,29 +79,22 @@ encrypt(unsigned char *plaintext, int plaintext_len, unsigned char *key,
 	EVP_CIPHER_CTX *ctx;
 
 	int len;
-	int i;
 	int ciphertext_len;
 
 	if (!(ctx = EVP_CIPHER_CTX_new()))
 		handleErrors();
 
-	if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_xts(), NULL, key, NULL))
+	if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, key, iv))
 		handleErrors();
 
-	for (i = 0; i < 1000000; i++) {
+	if (1 != EVP_EncryptUpdate(ctx, ciphertext, &len, plaintext, plaintext_len))
+		handleErrors();
 
-		if (1 != EVP_EncryptInit_ex(ctx, NULL, NULL, NULL, iv))
-			handleErrors();
+	ciphertext_len = len;
 
-		if (1 != EVP_EncryptUpdate(ctx, ciphertext, &len, plaintext, plaintext_len))
-			handleErrors();
-
-		ciphertext_len = len;
-
-		if (1 != EVP_EncryptFinal_ex(ctx, ciphertext + len, &len))
-			handleErrors();
-		ciphertext_len += len;
-	}
+	if (1 != EVP_EncryptFinal_ex(ctx, ciphertext + len, &len))
+		handleErrors();
+	ciphertext_len += len;
 
 	EVP_CIPHER_CTX_free(ctx);
 
