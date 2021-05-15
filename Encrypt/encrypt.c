@@ -88,7 +88,7 @@ encrypt(unsigned char *plaintext, int plaintext_len, unsigned char *key,
 	if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_xts(), NULL, key, NULL))
 		handleErrors();
 
-	for (i = 0; i < 1000000; i++) {
+	for (i = 0; i < 10; i++) {
 
 		if (1 != EVP_EncryptInit_ex(ctx, NULL, NULL, NULL, iv))
 			handleErrors();
