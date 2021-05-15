@@ -15,5 +15,22 @@ int main(int argc, char *argv[]){
 	strcpy(output_file, input_file);
 	strcat(output_file, ".enc");
 
-	printf("%s, %s, %s\n", input_file, output_file, key);
+	unsigned char *buffer = 0;
+        long length;
+        FILE *f;
+
+	f = fopen(input_file, "rb");
+        if (f)
+        {
+                fseek(f, 0, SEEK_END);
+                length = ftell(f);
+                fseek(f, 0, SEEK_SET);
+                buffer = malloc(length);
+                if (buffer)
+                {
+			fread(buffer, 1, length, f);
+                }
+                fclose(f);
+        }
+
 }
