@@ -16,18 +16,36 @@ encrypt(unsigned char *plaintext, int plaintext_len, unsigned char *key,
 int
 main(int argc, char *argv[])
 {
+	int i = 0;
+	char *input_file = NULL;
+	char *output_file = NULL;
+	char *password = NULL;
 
-	if (argc != 3) {
-		printf("Usage: encrypt {file} {key}\n");
+	for (i = 0; i < argc; i++) {
+		if (strcmp(argv[i], "--input-file") == 0) {
+			i++;
+			input_file = malloc(strlen(argv[i]) + 1);
+			strcpy(input_file, argv[i]);
+		} else if (strcmp(argv[i], "--output-file") == 0) {
+			i++;
+			output_file = malloc(strlen(argv[i]) + 1);
+			strcpy(output_file, argv[i]);
+		} else if (strcmp(argv[i], "-key") == 0) {
+			i++;
+			password = malloc(strlen(argv[i]) + 1);
+			strcpy(password, argv[i]);
+		}
+	}
+
+	if (!input_file || !password) {
+		printf("Usage: encrypt --input-file {file} --output-file {file] -key {key}\n");
 		return 1;
 	}
-	char *input_file = argv[1];
-	char *output_file = malloc(strlen(input_file + 4));
-	char *password = argv[2];
-
-	strcpy(output_file, input_file);
-	strcat(output_file, ".enc");
-
+	if (!output_file) {
+		output_file = malloc(strlen(input_file) + 5);
+		strcpy(output_file, input_file);
+		strcat(output_file, ".enc");
+	}
 	unsigned char *buffer = 0;
 	long length;
 	FILE *f;
