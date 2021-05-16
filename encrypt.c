@@ -34,7 +34,7 @@ main(int argc, char *argv[])
 	} else if (strcmp(argv[1], "dec")) {
 		mode = true;
 	} else {
-		printf("EE Usage: encrypt --input-file {file} --output-file {file] -key {key}\n");
+		printf("Encrypt: encrypt enc --input-file {file} --output-file {file] -key {key}\nDecrypt: encrypt dec --input-file {file} --output-file {file] -key {key}\n");
 		return 1;
 	}
 
@@ -55,7 +55,7 @@ main(int argc, char *argv[])
 	}
 
 	if (!input_file || !password) {
-		printf("Usage: encrypt --input-file {file} --output-file {file] -key {key}\n");
+		printf("Encrypt: encrypt enc --input-file {file} --output-file {file] -key {key}\nDecrypt: encrypt dec --input-file {file} --output-file {file] -key {key}\n");
 		return 1;
 	}
 	if (!output_file) {
@@ -100,7 +100,7 @@ main(int argc, char *argv[])
 		output_text = malloc(length);
 		output_len = decrypt(buffer, length, key, iv, output_text);
 	} else {
-		fprintf(stderr, "Error opening file!\n");
+		fprintf(stderr, "Idk how the fuck you got here?\n");
 		return 1;
 	}
 
