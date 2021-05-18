@@ -68,26 +68,25 @@ main(int argc, char *argv[])
 	FILE *f;
 
 	f = fopen(input_file, "rb");
-	if (f) {
-		fseek(f, 0, SEEK_END);
-		length = ftell(f);
-		if (length < 32) {
-			fprintf(stderr, "File is too small!\n");
-			return 1;
-		}
-		fseek(f, 0, SEEK_SET);
-		buffer = malloc(length);
-		if (buffer) {
-			fread(buffer, 1, length, f);
-		}
-		fclose(f);
-	} else {
-
+	if (!f) {
 		fprintf(stderr, "Error opening file!\n");
 		return 1;
 	}
+	fseek(f, 0, SEEK_END);
+	length = ftell(f);
+	if (length < 32) {
+		fprintf(stderr, "File is too small!\n");
+		return 1;
+	}
+	fseek(f, 0, SEEK_SET);
+	buffer = malloc(length);
+	if (!buffer) {
+		fprintf(stderr, "Error allocating memory");
+	}
+	fread(buffer, 1, length, f);
+	fclose(f);
 
-	unsigned char *key = (unsigned char *) SHA256Data(password, strlen(password), NULL);
+	unsigned char *key = (unsigned char *) SHA1Data(password, strlen(password), NULL);
 	unsigned char *iv = (unsigned char *) SHA1Data(password, strlen(password), NULL);
 
 	int output_len;
@@ -103,7 +102,6 @@ main(int argc, char *argv[])
 		fprintf(stderr, "Idk how the fuck you got here?\n");
 		return 1;
 	}
-
 	if (output_text) {
 		f = fopen(output_file, "w");
 		fwrite(output_text, output_len, 1, f);
@@ -131,7 +129,7 @@ encrypt(unsigned char *plaintext, int plaintext_len, unsigned char *key,
 	if (!(ctx = EVP_CIPHER_CTX_new()))
 		handleErrors();
 
-	if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, key, iv))
+	if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_128_cbc(), NULL, key, iv))
 		handleErrors();
 
 	if (1 != EVP_EncryptUpdate(ctx, ciphertext, &len, plaintext, plaintext_len))
@@ -161,7 +159,7 @@ decrypt(unsigned char *ciphertext, int ciphertext_len, unsigned char *key,
 	if (!(ctx = EVP_CIPHER_CTX_new()))
 		handleErrors();
 
-	if (1 != EVP_DecryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, key, iv))
+	if (1 != EVP_DecryptInit_ex(ctx, EVP_aes_128_cbc(), NULL, key, iv))
 		handleErrors();
 
 	if (1 != EVP_DecryptUpdate(ctx, plaintext, &len, ciphertext, ciphertext_len))

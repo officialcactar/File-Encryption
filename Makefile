@@ -1,4 +1,4 @@
-CC = cc
+CC = gcc
 LDFLAGS = -lssl -lcrypto -lm
 CFLAGS = -I/usr/local/include -static
 BIN = encrypt
